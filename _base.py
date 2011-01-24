@@ -5,12 +5,14 @@ from lxml import etree
 from soaplib import MethodContext
 from soaplib.core.model.primitive import string_encoding
 
+
 class Factory(object):
     def __init__(self, app):
         self.__app = app
 
     def create(self, object_name):
         return self.__app.get_class_instance(object_name)
+
 
 class Service(object):
     def __init__(self, rpc_class, url, app):
@@ -21,6 +23,7 @@ class Service(object):
 
     def __getattr__(self, key):
         return self.rpc_class(self.__url, self.__app, key, self.out_header)
+
 
 class RemoteProcedureBase(object):
     def __init__(self, url, app, name, out_header):
@@ -52,17 +55,21 @@ class RemoteProcedureBase(object):
         return request_raw
 
     def get_out_string(self, out_object):
-        request_xml = self.app.serialize_soap(self.ctx, self.app.NO_WRAPPER,
-                                                                     out_object)
+        request_xml = self.app.serialize_soap(self.ctx,
+                                              self.app.NO_WRAPPER,
+                                              out_object)
         request_str = etree.tostring(request_xml,
-                                 xml_declaration=True, encoding=string_encoding)
+                                     xml_declaration=True,
+                                     encoding=string_encoding)
 
         return request_str
 
     def get_in_object(self, response_str, is_error=False):
         root, xmlids = self.app.parse_xml_string(response_str)
         wrapped_response = self.app.deserialize_soap(self.ctx,
-                                             self.app.OUT_WRAPPER, root, xmlids)
+                                                     self.app.OUT_WRAPPER,
+                                                     root,
+                                                     xmlids)
 
         if isinstance(wrapped_response, Fault) or is_error:
             raise wrapped_response
@@ -72,11 +79,14 @@ class RemoteProcedureBase(object):
 
             if len(self.ctx.descriptor.out_message._type_info) == 1:
                 wrapper_attribute = type_info.keys()[0]
-                response_raw = getattr(wrapped_response, wrapper_attribute, None)
+                response_raw = getattr(wrapped_response,
+                                       wrapper_attribute,
+                                       None)
 
                 return response_raw
             else:
                 return wrapped_response
+
 
 class Base(object):
     def __init__(self, url, app):

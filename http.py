@@ -25,22 +25,24 @@ from soaplib.client import Service
 from soaplib.client import Base
 from soaplib.client import RemoteProcedureBase
 
+
 class _RemoteProcedure(RemoteProcedureBase):
     def __call__(self, *args, **kwargs):
         out_object = self.get_out_object(args, kwargs)
         out_string = self.get_out_string(out_object)
 
         request = urllib2.Request(self.url, out_string)
-        code=200
+        code = 200
         try:
             response = urllib2.urlopen(request)
             in_str = response.read()
 
-        except urllib2.HTTPError,e:
-            code=e.code
+        except urllib2.HTTPError, e:
+            code = e.code
             in_str = e.read()
 
         return self.get_in_object(in_str, is_error=(code == 500))
+
 
 class Client(Base):
     def __init__(self, url, app):

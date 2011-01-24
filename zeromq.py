@@ -27,6 +27,7 @@ from soaplib.client import Base
 
 context = zmq.Context()
 
+
 class _RemoteProcedure(RemoteProcedureBase):
     def __call__(self, *args, **kwargs):
         out_object = self.get_out_object(args, kwargs)
@@ -35,10 +36,11 @@ class _RemoteProcedure(RemoteProcedureBase):
         socket = context.socket(zmq.REQ)
         socket.connect(self.url)
         socket.send(out_string)
-    
+
         in_str = socket.recv()
 
         return self.get_in_object(in_str)
+
 
 class Client(Base):
     def __init__(self, url, app):
