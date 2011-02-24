@@ -21,9 +21,9 @@
 
 import urllib2
 
-from soaplib.client import Service
-from soaplib.client import Base
-from soaplib.client import RemoteProcedureBase
+from soaplibclient import Service
+from soaplibclient import Base
+from soaplibclient import RemoteProcedureBase
 
 
 class _RemoteProcedure(RemoteProcedureBase):
@@ -31,7 +31,7 @@ class _RemoteProcedure(RemoteProcedureBase):
         out_object = self.get_out_object(args, kwargs)
         out_string = self.get_out_string(out_object)
 
-        request = urllib2.Request(self.url, out_string)
+        request = urllib2.Request(self.url, out_string, {'Content-type':'text/xml; charset=utf-8'})
         code = 200
         try:
             response = urllib2.urlopen(request)
